@@ -9,21 +9,87 @@ class MyClient {
         PrintWriter out = new PrintWriter(s.getOutputStream(), true);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        out.println("HELO"); // Send HELO
-
+        out.println("HELO"); // Client sends HELO
+	String response = in.readLine(); //Server should response OK
+	
         String username = "user.name";
         String authMessage = "AUTH " + username;
-        out.println(authMessage); // Send AUTH username
+        out.println(authMessage); // Client sends AUTH username
 
-        String response = in.readLine();
+       	response = in.readLine(); //Server should respond OK
         /*System.out.println("Server says: " + response);*/
 
-       
+    
+       	Boolean flag=true;
         String largestServerType = null;
+        int largestCoreCount=0;
         int largestServerCount = 0;
         
+     
+      while (true) {
+      
+      	 //System.out.println("Value at start of loop: " + response); //Checking server response
+         out.println("REDY"); // Send REDY
+         response = in.readLine(); // Receive a message
+        // System.out.println("First while loop response after REDY: " + response); //Checking server response
         
-       
+            
+      	if (response.equals("NONE")){ //Break out of the loop if no jobs available
+		break;
+	}
+	
+	else if (response.equals("JCPL")) { //Next iteration of loop after job completion message
+		continue;
+	}
+	
+	else { //Server response is JOBN
+	
+		if (flag) {
+		 out.println("GETS All"); //Get server state information
+		 response=in.readLine(); //Should respond with DATA X Y
+		 out.println("OK"); //Send OK 
+		 
+		String[] parts = response.split("\\s+"); 
+                System.out.println("Parts: " + Arrays.toString(parts)); //Checking server response
+                
+                int nRecs = Integer.parseInt(parts[1]);
+                int recSize = Integer.parseInt(parts[2]);
+               
+              
+                for (int i = 0; i < nRecs; i++) {
+             
+                    response = in.readLine(); //Receiving each record
+                    
+                    
+                    System.out.println("RECENT" + response);
+                    String[] serverInfo = response.split("\\s+");
+                    String serverType = serverInfo[0];
+                  //  int serverCount = Integer.parseInt(serverInfo[1]);
+                    int coreCount = Integer.parseInt(serverInfo[4]);
+                    
+                    if (serverType.equals(largestServerType)) { //Checking if there is more of the largest server type
+                    		largestServerCount++;
+                    		System.out.println("SERVCOUNT: " + largestServerCount);
+                    	} 
+                   
+                    if (coreCount > largestCoreCount){ 	
+                    	 largestServerType = serverType;
+                         largestCoreCount= coreCount;
+                
+		 
+	}
+	}
+	}
+	
+	System.out.println("LargServ: " + largestServerType);
+	System.out.println("LargeCCount: " + largestCoreCount);
+	}
+      
+      
+      
+      
+      
+       /*
         while (!response.equals("NONE")) {
             
    	    System.out.println("Value at start of loop: " + response);
@@ -86,7 +152,7 @@ class MyClient {
               
                 out.println("OK");
             }
-        }
+        }*/
 
         out.println("QUIT"); // Send QUIT 
     
@@ -97,8 +163,11 @@ class MyClient {
         s.close();
     }
     
+    }
+    }
+    
     
   
 
 
-}
+
