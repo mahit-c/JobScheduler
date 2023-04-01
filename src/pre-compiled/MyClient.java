@@ -12,7 +12,7 @@ class MyClient {
         out.println("HELO"); // Client sends HELO
 	String response = in.readLine(); //Server should response OK
 	
-        String username = "user.name";
+        String username = "mahit";
         String authMessage = "AUTH " + username;
         out.println(authMessage); // Client sends AUTH username
 
@@ -40,7 +40,7 @@ class MyClient {
 		break;
 	}
 	
-	else if (response.equals("JCPL")) { //Next iteration of loop after job completion message
+	else if (response.startsWith("JCPL")) { //Next iteration of loop after job completion message
 		continue;
 	}
 	
