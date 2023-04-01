@@ -23,7 +23,7 @@ class MyClient {
        	Boolean flag=true;
         String largestServerType = null;
         int largestCoreCount=0;
-        int largestServerCount = 0;
+        int largestServerCount = 1;
         
      
       while (true) {
@@ -67,22 +67,25 @@ class MyClient {
                   //  int serverCount = Integer.parseInt(serverInfo[1]);
                     int coreCount = Integer.parseInt(serverInfo[4]);
                     
-                    if (serverType.equals(largestServerType)) { //Checking if there is more of the largest server type
-                    		largestServerCount++;
-                    		System.out.println("SERVCOUNT: " + largestServerCount);
-                    	} 
+                     if (serverType.equals(largestServerType)) { //Checking if there is more of the largest server type
+                    		largestServerCount++; //Incrementing count if current server type equals to largest
+        
+                } 
                    
                     if (coreCount > largestCoreCount){ 	
                     	 largestServerType = serverType;
                          largestCoreCount= coreCount;
+                         largestServerCount=1; // Resetting count 1 if new larger count is found
                 
-		 
-	}
+		}  
+		
+		   
 	}
 	}
 	
 	System.out.println("LargServ: " + largestServerType);
 	System.out.println("LargeCCount: " + largestCoreCount);
+	System.out.println("SERVCOUNT: " + largestServerCount);
 	}
       
       
