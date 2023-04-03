@@ -4,77 +4,64 @@ import java.util.Arrays;
 
 class MyClient {
     public static void main(String args[]) throws Exception {
+    
+    	//Initial connection and communication establishment:
         Socket s = new Socket("127.0.0.1", 50000);
         BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
         PrintWriter out = new PrintWriter(s.getOutputStream(), true);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         out.println("HELO"); // Client sends HELO
-	String response = in.readLine(); //Server should response OK
+	String sreply = in.readLine(); //Storing server responses //Server should respond with OK here
 	
         String username = "mahit";
         String authMessage = "AUTH " + username;
         out.println(authMessage); // Client sends AUTH username
 
-       	response = in.readLine(); //Server should respond OK
-        /*System.out.println("Server says: " + response);*/
-
+       	sreply = in.readLine(); //Server should respond OK
     
-       	Boolean flag = true;
-        String largestServerType = null;
-        int largestCoreCount = 0;
-        int largestServerCount = 1;
-        
-        int serverID = 0;
+       	Boolean flag = true;  //For getting largest server info only ONCE
+        String largestServerType = null; //For storing the largest server type name
+        int largestCoreCount = 0; //For storing the server's core counts to determine the highest (largest) one
+        int largestServerCount = 1; //For keeping track of the no.of servers of the largest type
+        int serverID = 0; //For scheduling jobs to the required servers
         
      
       while (true) {
       
-      	 //System.out.println("Value at start of loop: " + response); //Checking server response
-         out.println("REDY"); // Send REDY
-         response = in.readLine(); // Receive a message
-         System.out.println("First while loop response after REDY: " + response); //Checking server response
+         out.println("REDY"); // Send REDY to request for job
+         sreply = in.readLine(); // Receive a message
         
-            
-      	if (response.equals("NONE")){ //Break out of the loop if no jobs available
+      	if (sreply.equals("NONE")){ //Break out of the loop if no jobs available
 		break;
 	}
 	
-	else if (response.startsWith("JCPL")) { //Next iteration of loop after job completion message
+	else if (sreply.startsWith("JCPL")) { //Next iteration of loop after job completion message
 		continue;
 	}
 	
-	else { //Server response is JOBN
+	else { //Server response is JOBN; Start scheduling process + determine largest server (only first loop iteration)
 	
 		//Store job details:
-		String[] jobInfo = response.split("\\s+");
-                int jobID = Integer.parseInt(jobInfo[2]);
-                int estRunTime = Integer.parseInt(jobInfo[3]);
-                int core = Integer.parseInt(jobInfo[4]);
-                int mem = Integer.parseInt(jobInfo[5]);
-                System.out.println("Job details: " +  Arrays.toString(jobInfo));
+		String[] jobInfo = sreply.split("\\s+");
+                int jobID = Integer.parseInt(jobInfo[2]); //job ID is the only important value needed for scheduling
+             
 	
-		//Check server info only ONCE?:
+		//Check server info only ONCE:
 		if (flag) {
 		 out.println("GETS All"); //Get server state information
-		 response=in.readLine(); //Should respond with DATA X Y
+		 sreply=in.readLine(); //Should respond with DATA X Y
 		 out.println("OK"); //Send OK 
 		 
-		String[] parts = response.split("\\s+"); 
-                System.out.println("Parts: " + Arrays.toString(parts)); //Checking server response
-                
-                int nRecs = Integer.parseInt(parts[1]);
+		String[] parts = sreply.split("\\s+"); //Storing DATA X Y response to determine nRecs and recSize
+                int nRecs = Integer.parseInt(parts[1]); 
                 int recSize = Integer.parseInt(parts[2]);
                
               
                 for (int i = 0; i < nRecs; i++) {
              
-                    response = in.readLine(); //Receiving each record
-                    
-                    
-                    System.out.println(response); //Checking record info
-                    
-                    String[] serverInfo = response.split("\\s+");
+                    sreply = in.readLine(); //Receiving each record
+                    String[] serverInfo = sreply.split("\\s+");
                     String serverType = serverInfo[0];
                     int coreCount = Integer.parseInt(serverInfo[4]);
                     
@@ -91,33 +78,27 @@ class MyClient {
 	     }
 	     
 	     out.println("OK"); //Send OK
-	     response= in.readLine();
+	     sreply= in.readLine();
 	
 	}
 	
-	flag=false; //Determining largest server only ONCE?
+	flag=false; //Determining largest server only ONCE
 	
 	if (serverID >= largestServerCount){
 		serverID=0; //resetting to 0
 	}
+	
 	//Scheduling jobs:
 	out.println("SCHD " + jobID + " "+ largestServerType + " "+ serverID);
-	System.out.println("Job assigned to: " + serverID); //Checking server ID
+	//System.out.println("Job assigned to: " + serverID); //Checking job assigment and server ID's
 	serverID++; //Incrementing server ID to assign next job to next server
-	response= in.readLine();
-	
-	
-	//Checking largest server info:
-	System.out.println("LargServ: " + largestServerType);
-	System.out.println("LargeCCount: " + largestCoreCount);
-	System.out.println("SERVCOUNT: " + largestServerCount);
-	
+	sreply= in.readLine();
 		}
 	}
       
-        out.println("QUIT"); // Send QUIT 
+        out.println("QUIT"); // Send QUIT
     
-        response = in.readLine(); // Receive QUIT
+        sreply = in.readLine(); // Receive QUIT
 
         in.close();
         out.close();
