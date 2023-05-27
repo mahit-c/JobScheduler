@@ -46,10 +46,11 @@ class Stage2Client {
 	
 		//Store job details:
 		  String[] jobInfo = sreply.split("\\s+");
+		  System.out.println("JOBINFO ARRAY: " + jobInfo[0]);
                   int jobID = Integer.parseInt(jobInfo[2]); //job ID is the only important value needed for scheduling
                   int core = Integer.parseInt(jobInfo[4]);
                   int memory = Integer.parseInt(jobInfo[5]);
-                  int disk = Integer.parseInt(jobInfo[5]);
+                  int disk = Integer.parseInt(jobInfo[6]);
                   
                   System.out.println("Job Details are:" + core + memory + disk);
                   
@@ -71,22 +72,34 @@ class Stage2Client {
 		         int nRecs = Integer.parseInt(parts[1]); 
 		         int recSize = Integer.parseInt(parts[2]);
 		         
-		          if (nRecs==0) {
+		          if (nRecs==0) { //If NO Available servers go to servers that have jobs waiting
+		          	
+		      	
 			 	System.out.println("Server responded 0");
-			 	sreply = in.readLine(); 
-			 	System.out.println("Server reply after DATAXY OK" + sreply);
+			 	sreply=in.readLine();
+			 	System.out.println("First reply inside the if = " + sreply);
+			 	
+			 	//System.out.println("Server reply after DATAXY OK = " + sreply);
 			 	out.println("OK"); //Send OK 
 			 	sreply=in.readLine(); 
-			 	System.out.println("Server reply after OK" + sreply);
+			 	System.out.println("Server reply after OK = " + sreply); //Should be . here
 	
 			 
-			 	out.println("GETS Capable " + core + " "+ memory + " "+ disk);
-			 	System.out.println("GETS Capable " + core + " "+ memory + " "+ disk);  
+			 	out.println("GETS Capable " + core + " "+ memory + " "+ disk); 
 			 	
-			 	sreply=in.readLine(); 
-			 	System.out.println("Server reply after CAPABLE: " + sreply);
+			 	System.out.println("GETS Capable " + core + " "+ memory + " "+ disk);  //Checking for CAPABLE SERVERS (which can eventually do it);
 			 	
-			 } else {
+			 	sreply = in.readLine();
+			 	sreply = in.readLine();
+			 	System.out.println( "Reply after GETS Capable: " + sreply);
+			 	
+			 	out.println("OK"); //Send OK after DATA X Y
+			 	
+			 	String [] newParts = sreply.split("\\s+");
+			 	nRecs = Integer.parseInt(newParts[1]); //Updating value of nRecs
+			 	System.out.println("New Value of NRECS: " + nRecs);
+			 	
+			 } 
 		         
                //Scheduling job to First AVAILABLE SERVER:
 				
@@ -122,7 +135,7 @@ class Stage2Client {
 		
 		System.out.println("Server response after SCHD " + sreply);
 		
-		}
+		//}
 		
 	     }
 	     
