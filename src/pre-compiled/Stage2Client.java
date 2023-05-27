@@ -58,9 +58,7 @@ class Stage2Client {
 			 out.println("GETS Avail " + core + " "+ memory + " "+ disk); 
 			 sreply=in.readLine(); //Should respond with DATA X Y
 			 
-			 if (sreply.equals("0")) {
-			 	System.out.println("Server responded 0");
-			 }
+			
 			 System.out.println("Server response to GETS AVAIL:" + sreply);
                   
 			 
@@ -72,6 +70,23 @@ class Stage2Client {
                   
 		         int nRecs = Integer.parseInt(parts[1]); 
 		         int recSize = Integer.parseInt(parts[2]);
+		         
+		          if (nRecs==0) {
+			 	System.out.println("Server responded 0");
+			 	sreply = in.readLine(); 
+			 	System.out.println("Server reply after DATAXY OK" + sreply);
+			 	out.println("OK"); //Send OK 
+			 	sreply=in.readLine(); 
+			 	System.out.println("Server reply after OK" + sreply);
+	
+			 
+			 	out.println("GETS Capable " + core + " "+ memory + " "+ disk);
+			 	System.out.println("GETS Capable " + core + " "+ memory + " "+ disk);  
+			 	
+			 	sreply=in.readLine(); 
+			 	System.out.println("Server reply after CAPABLE: " + sreply);
+			 	
+			 } else {
 		         
                //Scheduling job to First AVAILABLE SERVER:
 				
@@ -91,8 +106,8 @@ class Stage2Client {
                    
 
 	     
-	    		//out.println("OK"); //Send OK
-	                //sreply= in.readLine();
+	    		out.println("OK"); //Send OK
+	                sreply= in.readLine();
 	
 		       
 	
@@ -107,7 +122,7 @@ class Stage2Client {
 		
 		System.out.println("Server response after SCHD " + sreply);
 		
-		
+		}
 		
 	     }
 	     
