@@ -19,15 +19,10 @@ class Stage2Client {
        out.println(authMessage); // Client sends AUTH username
  
        sreply = in.readLine(); //Server should respond OK
-    
-       //Boolean flag = true;  //For getting largest server info only ONCE
-       //String largestServerType = null; //For storing the largest server type name
-       //int largestCoreCount = 0; //For storing the server's core counts to determine the highest (largest) one
-       //int largestServerCount = 1; //For keeping track of the no.of servers of the largest type
-       //int serverID = 0; //For scheduling jobs to the required servers
         
     	String serverToSend = null;
     	String serverID=null;
+    	
      
        while (true) {
       
@@ -46,13 +41,15 @@ class Stage2Client {
 	
 		//Store job details:
 		  String[] jobInfo = sreply.split("\\s+");
-		  System.out.println("JOBINFO ARRAY: " + jobInfo[0]);
+		 // System.out.println("JOBINFO ARRAY: " + jobInfo[0]);
                   int jobID = Integer.parseInt(jobInfo[2]); //job ID is the only important value needed for scheduling
                   int core = Integer.parseInt(jobInfo[4]);
                   int memory = Integer.parseInt(jobInfo[5]);
                   int disk = Integer.parseInt(jobInfo[6]);
                   
-                  System.out.println("Job Details are:" + core + memory + disk);
+                  boolean check= false;
+                  
+                 // System.out.println("Job Details are:" + core + memory + disk);
                   
              //Check currently available servers using GETS Avail:
              
@@ -60,7 +57,7 @@ class Stage2Client {
 			 sreply=in.readLine(); //Should respond with DATA X Y
 			 
 			
-			 System.out.println("Server response to GETS AVAIL:" + sreply);
+			 //System.out.println("Server response to GETS AVAIL:" + sreply);
                   
 			 
 			 //
@@ -75,50 +72,82 @@ class Stage2Client {
 		          if (nRecs==0) { //If NO Available servers go to servers that have jobs waiting
 		          	
 		      	
-			 	System.out.println("Server responded 0");
+			 	//System.out.println("Server responded 0");
 			 	sreply=in.readLine();
-			 	System.out.println("First reply inside the if = " + sreply);
+			 	//System.out.println("First reply inside the if = " + sreply);
 			 	
 			 	//System.out.println("Server reply after DATAXY OK = " + sreply);
 			 	out.println("OK"); //Send OK 
 			 	sreply=in.readLine(); 
-			 	System.out.println("Server reply after OK = " + sreply); //Should be . here
+			 	//System.out.println("Server reply after OK = " + sreply); //Should be . here
 	
 			 
 			 	out.println("GETS Capable " + core + " "+ memory + " "+ disk); 
 			 	
-			 	System.out.println("GETS Capable " + core + " "+ memory + " "+ disk);  //Checking for CAPABLE SERVERS (which can eventually do it);
+			 	//System.out.println("GETS Capable " + core + " "+ memory + " "+ disk);  //Checking for CAPABLE SERVERS (which can eventually do it);
 			 	
 			 	sreply = in.readLine();
 			 	sreply = in.readLine();
-			 	System.out.println( "Reply after GETS Capable: " + sreply);
+			 	//System.out.println( "Reply after GETS Capable: " + sreply);
 			 	
 			 	out.println("OK"); //Send OK after DATA X Y
 			 	
 			 	String [] newParts = sreply.split("\\s+");
 			 	nRecs = Integer.parseInt(newParts[1]); //Updating value of nRecs
-			 	System.out.println("New Value of NRECS: " + nRecs);
+			 	//System.out.println("New Value of NRECS: " + nRecs);
+			 	
+			 	
+			 	//ATTEMPT AT SOMETHING ELSE:
+			 	check =  true;
+			 	
+
 			 	
 			 } 
 		         
                //Scheduling job to First AVAILABLE SERVER:
 				
 				for (int i=0; i<nRecs; i++) {
-			     
+					
+			     	    int smallestValue=0; //for storing no.of waiting jobs
+			     	    
 				    sreply = in.readLine(); //Receiving each record
-				    System.out.println("SERVER INFO REPLY: " + sreply);
+				  //  System.out.println("SERVER INFO REPLY: " + sreply);
 				    String[] serverInfo = sreply.split("\\s+");
 				    
 				    if (i==0) {
 				    serverToSend = serverInfo[0];
 				    serverID = serverInfo[1];
+				    smallestValue = Integer.parseInt(serverInfo[7]); //Storing no.of waiting jobs
+				 //   System.out.println("The first server to schedule is: " + serverToSend +   serverID + Integer.parseInt(serverInfo[7]));
 				    }
+				    
+				    
+				    if (check) {//If checking the CAPABLE servers ; SCHEDULING TO THE SERVER WITH THE LEAST AMOUNT OF WAITING JOBS
+				    
+				    	if (Integer.parseInt(serverInfo[7]) < smallestValue){ 
+				    	
+				    		smallestValue = Integer.parseInt(serverInfo[7]);
+				    		 serverToSend = serverInfo[0]; //Updating server to the one with LEAST watiitng jobs
+					    	serverID = serverInfo[1];
+					    	
+					    	
+
+				    	    
+				    	
+				    	}
+					//   System.out.println("The new server to schedule is: " + serverToSend +   serverID + Integer.parseInt(serverInfo[7]));
+
+				    
+				    }
+				  
+				    
 				    
 				   }
 				    
-                   
-
+				    check = false;
+				      
 	     
+                   
 	    		out.println("OK"); //Send OK
 	                sreply= in.readLine();
 	
@@ -129,11 +158,11 @@ class Stage2Client {
 		//Scheduling jobs:
 		out.println("SCHD " + jobID + " "+ serverToSend + " "+ serverID);
 		
-		System.out.println("SCHD " + jobID + " "+ serverToSend + " "+ serverID); //Checking job assigment and server ID's
+		//System.out.println("SCHD " + jobID + " "+ serverToSend + " "+ serverID); //Checking job assigment and server ID's
 		
 		sreply= in.readLine();
 		
-		System.out.println("Server response after SCHD " + sreply);
+		//System.out.println("Server response after SCHD " + sreply);
 		
 		//}
 		
