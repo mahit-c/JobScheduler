@@ -47,7 +47,7 @@ class Stage2Client {
                   int memory = Integer.parseInt(jobInfo[5]);
                   int disk = Integer.parseInt(jobInfo[6]);
                   
-                  boolean check= false;
+                  boolean check= false; //Variable to control GETS Capable scheduling
                   
                  // System.out.println("Job Details are:" + core + memory + disk);
                   
@@ -97,14 +97,13 @@ class Stage2Client {
 			 	//System.out.println("New Value of NRECS: " + nRecs);
 			 	
 			 	
-			 	//ATTEMPT AT SOMETHING ELSE:
+			 	//Setting check to true:
 			 	check =  true;
 			 	
 
 			 	
 			 } 
 		         
-               //Scheduling job to First AVAILABLE SERVER:
 				
 				for (int i=0; i<nRecs; i++) {
 					
@@ -118,7 +117,7 @@ class Stage2Client {
 				    serverToSend = serverInfo[0];
 				    serverID = serverInfo[1];
 				    smallestValue = Integer.parseInt(serverInfo[7]); //Storing no.of waiting jobs
-				 //   System.out.println("The first server to schedule is: " + serverToSend +   serverID + Integer.parseInt(serverInfo[7]));
+				   System.out.println("The first server to schedule is: " + serverToSend +   serverID + Integer.parseInt(serverInfo[7]));
 				    }
 				    
 				    
@@ -129,13 +128,9 @@ class Stage2Client {
 				    		smallestValue = Integer.parseInt(serverInfo[7]);
 				    		 serverToSend = serverInfo[0]; //Updating server to the one with LEAST watiitng jobs
 					    	serverID = serverInfo[1];
-					    	
-					    	
-
-				    	    
-				    	
+					    	check = false;
 				    	}
-					//   System.out.println("The new server to schedule is: " + serverToSend +   serverID + Integer.parseInt(serverInfo[7]));
+					   System.out.println("The new server to schedule is: " + serverToSend +   serverID + Integer.parseInt(serverInfo[7]));
 
 				    
 				    }
@@ -144,7 +139,7 @@ class Stage2Client {
 				    
 				   }
 				    
-				    check = false;
+				    
 				      
 	     
                    
